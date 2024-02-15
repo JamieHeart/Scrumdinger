@@ -21,7 +21,7 @@ automations:
     run:
       - action: send-slack-message@v1
         args:
-          message: "New PR for {{repo.name}} to merge to {{pr.target}} will take ~ {{calc.etr}} minutes to review"
+          message: "New PR for {{repo.name}} to merge to {{pr.target}}\nWill take ~ {{calc.etr}} minutes to review.\nPR: {{ env.pr_url }}"
           webhook_url: "{{ slack_webhook }}"
 
 
@@ -45,3 +45,5 @@ colors:
   green: '0e8a16'
 
 slack_webhook: {{ env.SLACK_WEBHOOK }}
+
+pr_url: {{ env.PR_EVENT.html.href }}
