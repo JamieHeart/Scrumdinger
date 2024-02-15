@@ -49,4 +49,5 @@ jobs:
           resolver_token: ${{ github.event.inputs.resolver_token }}
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK  }}
+          PR_EVENT: ${{github.event.pull_request}}
 
