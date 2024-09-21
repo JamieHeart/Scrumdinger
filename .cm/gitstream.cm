@@ -21,8 +21,27 @@ automations:
     run:
       - action: send-slack-message@v1
         args:
-          message: "New PR for {{repo.name}} to merge to {{pr.target}}\nWill take ~ {{calc.etr}} minutes to review.\nPR: {{ pr.url }}"
+          message: |
+            New PR for {{repo.name}} by {{pr.author}} to merge from {{pr.source}} to {{pr.target}}
+            Will take ~ {{calc.etr}} minutes to review.
+            {{pr.description}}
+            ---
+            PR: {{ pr.url }}
           webhook_url: "{{ slack_webhook }}"
+  # Inform PR authors when they fail to reference Jira tickets in the PR title or description.
+  label_missing_jira_info:
+    if:
+      - {{ not (has.jira_ticket_in_title or has.jira_ticket_in_desc) }}
+    run:
+      - action: add-label@v1
+        args:
+          label: "missing-linear-ticket"
+          color: {{ colors.red }}
+      - action: add-comment@v1
+        args:
+          comment: |
+            This PR is missing a Linear ticket reference in the title or description.
+            Please add a Jira ticket reference to the title or description of this PR.
   add_comment:
     if:
       - true
@@ -30,8 +49,9 @@ automations:
       - action: add-comment@v1
         args:
           comment: |
-            {{ pr }}
-
+            New PR for {{repo.name}} by {{pr.author}} to merge from {{pr.source}} to {{pr.target}}
+            Will take ~ {{calc.etr}} minutes to review.
+            
 
 
 # +----------------------------------------------------------------------------+
